@@ -8,8 +8,8 @@ Fall Semester 2026
 
 Purpose:
   1. Test if student's mergesort.py works woth the COMPAS dataset
-  2.Provide helpful feedback when code is incomplete 
-  3.Guide students through implemtation step-by-step
+  2. Provide helpful feedback when code is incomplete 
+  3. Guide students through implemtation step-by-step
   4. Check compatibility with real data strucrures 
 '''
 Class Tester:  
