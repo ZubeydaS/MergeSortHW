@@ -2,7 +2,7 @@ import csv
 import os
 import sys
 
-''''
+'''
 CS 252 Merge Sort HW
 Fall Semester 2026
 
@@ -12,7 +12,7 @@ Purpose:
   3. Guide students through implemtation step-by-step
   4. Check compatibility with real data strucrures 
 '''
-Class Tester:  
+class Tester:  
 def __init__(self):
   self.student = None;
 
@@ -37,19 +37,19 @@ def __init__(self):
 
 ### Test 2: Person class -> dpes the class structure exist?
 def test_person_structure(self):
-print(n\ TEST 2: Checking person class...")
+print("n\ TEST 2: Checking person class...")
 try: 
   person = self.student.Person("Test", 1, 2, 3, 4)
   print("PASS: Person class structure exists")
   return True
 except Exception as e:
-print(f" FAIL: Cannot create Person - (e)")
+print(f"  FAIL: Cannot create Person - (e)")
 print("  Check your Person class definition")
 return False
 
 ### Test 3: Function choices -> are all required functions defined
 def test_functions(self):
-print("\n TEST 3: Checking functions...")
+print("\n  TEST 3: Checking functions...")
 required_functions = ['come_before', 'merge', 'merge_sort', 'load_data']
 missing_functions = []
 
@@ -58,13 +58,13 @@ for func in required_functions:
     print (f" {func}() is defined")
 else:
     print(f"   {func}() is missing")
-    missing_function.append(func)
-  if not missing_function:
+    missing_functions.append(func)
+  if not missing_functions:
     print("PASS: All basic functions exist ")
     return True
   else:
     print(f"  FAIL: Missing functions: {missing_functions}")
-    returns FALS
+    return FAILS
 
 ### Test 4: Main block -> does the main code structure esxist in the student's submission
  def test_main_block(self):
@@ -89,14 +89,14 @@ except:
 def test_data_compatibility(self):
 
 print("\n TEST 5: Creating compatible test files")
-with open('COMPAS Data - Sample Data.csv)
-  print("n\  TEST 5: Creating compatible test files)
+with open('COMPAS Data - Sample Data.csv')
+  print("n\  TEST 5: Creating compatible test files)"
   writer.writerow(['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
-  writer.writerow('[Michael Jackson', 8, 3, 45, 60])
-  writer.writerow(['Bob Dylan', 2, 1, 10 ,15])
-  writer.writerow(['Whitney Houston, 5, 2, 30, 40])
-  writer.writerow(['Star Dust, 9, 4, 80, 100])
-  writer.writerow(['Minnie Riperton',1, 0, 5, 8])
+  writer.writerow('[Michael Jackson]', 8, 3, 45, 60])
+  writer.writerow(['Bob Dylan'], 2, 1, 10 ,15])
+  writer.writerow(['Whitney Houston'], 5, 2, 30, 40])
+  writer.writerow(['Star Dust'], 9, 4, 80, 100])
+  writer.writerow(['Minnie Riperton'],1, 0, 5, 8])
 
   print("  PASS: Created compatible_test.csv")
   print("  This file has the eact columns the homework needs :)")
@@ -130,7 +130,7 @@ else:
   progress.append("  Person needs attribute storage")
 
   if hasattr(person, 'new_decile'):
-    progress_append("  Person has new_decile")
+    progress.append("  Person has new_decile")
   else:
     progress.append("  Person needs new_decile calculation")
 
@@ -140,7 +140,7 @@ else:
       try:
         Person = self.student.Person
         test_person = Person("Test", 1, 0, 0 ,0)
-        result = self.student.comes_before(test_peerson, test_person, 'decile_score')
+        result = self.student.comes_before(test_person, test_person, 'decile_score')
           if result is not None:
             progress.append("  comes_before implemented")
           else:
@@ -160,7 +160,7 @@ else:
     print("  Current Status:")
     for item in progress:
       print(f"  (item)")
-Return true
+return True
       
 ### Test 8: Code and style organization
 def test_code_style(self):
@@ -168,27 +168,27 @@ def test_code_style(self):
 print(\n TEST8: Checking code style and organization...)
 try:
   with open('mergesort.py', 'r') as f:
-  content = f.read()
+    content = f.read()
 
-  style_notes = []
+  style_note = []
 
   if len(content) > 100:
-    style_notes_apppend("Good code length")
+    style_note.apppend("Good code length")
   else:
-    styles_notes.append("Minimal implementation")
+    style_note.append("Minimal implementation")
 
   if content.count('#') > 5:
-  style_notes.append("has comments: good documentation"):
+  style_note.append("has comments: good documentation"):
   else:
-    style_notes.append("Could use more comments to explain your logic :/")
+    style_note.append("Could use more comments to explain your logic :/")
 
   if 'getattr' in content:
-    style_notes_append("Uses getattr: follows starter code suggestions")
+    style_note_append("Uses getattr: follows starter code suggestions")
   else:
-    style_notes_append("Consider using getattr for flexible attribute access")
-  print("  Style notes:")
-  for note in style_notes:
-      print(f"  {notes}")
+    style_note_append("Consider using getattr for flexible attribute access")
+  print("  Style note:")
+  for note in style_note:
+      print(f"  {note}")
     return True
   except:
     print("  Could not alalyze code style")
@@ -204,7 +204,7 @@ try:
     print("    self.decile_score = decile_score")
     print("    etc...")
     print("  - Calculate new_decile using the formula:")
-    print("    self.new_decile = 0.6*priots_count + 0.5*total_days_in_jail + 0.1*total_days_in_custody")
+    print("    self.new_decile = 0.6*priors_count + 0.5*total_days_in_jail + 0.1*total_days_in_custody")
              
     # Step 2: load the data - critical for connecting the data to the code!
     print("\n  2. LOAD_DATA (Critical!)")
@@ -292,12 +292,12 @@ try:
            
 # Main execution 
 def main():
-  tester + Tester()
+  tester = Tester()
   success = tester.run_all_tests()
-  sys_exit(0 if success else 1)
+  sys.exit(0 if success else 1)
 
 # run only whenb file is executed directly
-if __name__ == "__main__":
+(if __name__ == "__main__":)
   main()
   
 
