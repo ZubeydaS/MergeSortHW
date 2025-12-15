@@ -8,15 +8,15 @@ import student
 COMPAS Data Column Dictionary
 
 This file provides:
-  1. Complete COMPAS data dictionary for all 55 columns in the CSV
-  2. Essential columns needed for the merge sort homework
-  3. Standard unittest test cases with edge cases
-  4. Simple helper functions for understanding the assignment
+	1. Complete COMPAS data dictionary for all 55 columns in the CSV
+	2. Essential columns needed for the merge sort homework
+	3. Standard unittest test cases with edge cases
+	4. Simple helper functions for understanding the assignment
 
 Students should:
-  - Run individual test functions to check implementation
-  - Use the column definitions to understand the COMPAS data
-  - Refer to the test cases to understand expected behavior
+	- Run individual test functions to check implementation
+	- Use the column definitions to understand the COMPAS data
+	- Refer to the test cases to understand expected behavior
 
 Run with: python3 -m unittest tests_student_helper.py or python3 tests_student_helper.py
 Tests merge sort homework functions with standard and edge cases.
@@ -248,315 +248,446 @@ if __name__ == "__main__":
 
 # Import student code
 try:
-    import student
+		import student
 except ImportError:
-    print("ERROR: Could not import student.py")
-    sys.exit(1)
+		print("\nERROR: student.py not found in current directory.")
+		print("1. Copy mergesort.py to student.py")
+		print("2. Start implementing the TODO comments in student.py")
+		print("3. Make sure student.py is in the same folder as this test file")
+		sys.exit(1)
 
 # Test suite for merge sort implementation
-
-
 class TestMergeSortFunctions(unittest.TestCase):
+  # Set up test data before each test
+	def setUp(self):
+		self.create_test_files()
 
-     # Set up test data before each test
-      def setUp(self):
-        self.create_test_files()
+	# Clean up test files after each test
+	def tearDown(self):
+		for f in ['test_normal.csv', 'test_empty.csv', 'test_single.csv', 'test_ties.csv', 'test_extremes.csv']:
+			if os.path.exists(f):
+				os.remove(f)
 
-      # Clean up test files after each test
-      def tearDown(self):
-        for f in ['test_normal.csv', 'test_empty.csv', 'test_single.csv', 'test_ties.csv', 'test_extremes.csv']:
-          if os.path.exists(f):
-            os.remove(f)
+	# Create test CSV files for various test cases
+	def create_test_files(self):
 
-      # Create test CSV files for various test cases
-      def create_test_files(self):
+		# TEST 1: BASIC FUNCTIONALITY (Standard Case)
+		# Tests: mixed data
+		with open('test_normal.csv', 'w', newline='') as f:
+			writer = csv.writer(f)
+			writer.writerow(['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
+			writer.writerows([
+					# Names are the expected sorting position
+				['1_FirstByDecile', 1, 0, 5, 8],     		# Lowest decile (1)
+				['2_SecondByDecile', 3, 2, 15, 20],   	# Second lowest (3)
+				['3_ThirdByDecile', 5, 3, 25, 30],	    # Middle (5)
+				['4_FourthByDecile', 7, 4, 35, 40],  	 	# Second highest (7)
+				['5_FifthByDecile', 9, 5, 45, 50]       # Highest decile (9)
+					])
+			
+			 # TEST 2: EMPTY FILE (Edge Case)
+			 # Tests: load_data() doesn't crash on empty files
+			with open('test_empty.csv', 'w', newline='') as f:
+				writer = csv.writer(f)
+				writer.writerow(
+					['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
 
-	      # TEST 1: BASIC FUNCTIONALITY (Standard Case)
-	      # Tests: mixed data
-        with open('test_normal.csv', 'w', newline='') as f:
-          writer = csv.writer(f)
-          writer.writerow(['name', 'decile_score', 'priors_count',
-                          'total_days_jail', 'total_days_custody'])
+				# TEST 3: SINGLE RECORD (Edge Case)
+				# Tests: merge_sort() base case (list length <= 1)
+			with open('test_single.csv', 'w', newline='') as f:
+				writer = csv.writer(f)
+				writer.writerow(
+					['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
+				writer.writerow(['Case_Single', 5, 2, 20, 25])
 
-          writer.writerows([
-              # Names are the expected sorting position
-            ['1_FirstByDecile', 1, 0, 5, 8],     	 # Lowest decile (1)
-            ['2_SecondByDecile', 3, 2, 15, 20],   	 # Second lowest (3)
-            ['3_ThirdByDecile', 5, 3, 25, 30],	     # Middle (5)
-            ['4_FourthByDecile', 7, 4, 35, 40],  	 # Second highest (7)
-            ['5_FifthByDecile', 9, 5, 45, 50]        # Highest decile (9)
-              ])
+				# TEST 4: ALL SAME SCORES (Edge Case)
+				# Tests: alphabetical tie-breaking in comes_before()
+			with open('test_ties.csv', 'w', newline='') as f:
+				writer = csv.writer(f)
+				writer.writerow(
+					['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
+				writer.writerows([
+					# Should be FRST alphabetically
+					['Amelia_Tie', 5, 2, 30, 40],
+					# Should be SECOND alphabetically
+					['Amy_Tie', 5, 2, 30, 40],
+					# Should be LAST alphabetically
+					['Andy_Tie', 5, 2, 30, 40]
+				])
 
-           # TEST 2: EMPTY FILE (Edge Case)
-           # Tests: load_data() doesn't crash on empty files
-          with open('test_empty.csv', 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  writer.writerow(
-                  	['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
+				# TEST 5: EXTREME VALUES (Edge Case)
+				# Tests: Formula handles min/max values without errors
+			with open('test_extremes.csv', 'w', newline='') as f:
+				writer = csv.writer(f)
+				writer.writerow(
+					['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
+				writer.writerows([
+					['Min', 1, 0, 0, 0],		# Minimum everything
+					['Max', 100, 100, 500, 500]  # Input maximum values
+				])
 
-            # TEST 3: SINGLE RECORD (Edge Case)
-            # Tests: merge_sort() base case (list length <= 1)
-          with open('test_single.csv', 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  writer.writerow(
-                  	['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
-                  writer.writerow(['Case_Single', 5, 2, 20, 25])
+### Person Class Tests ###
+# Tests basic Person class creation
+	def test_person_creation(self):
+		try:
+			person = student.Person("Test", 5, 2, 30, 40)
+			self.assertIsNotNone(person)
+		except TypeError as e:
+			self.fail(f"Person constructor error: {e}\n"
+	   					   "Person should take exactly 5 parameters:\n"
+							   "def __init__()")
 
-            # TEST 4: ALL SAME SCORES (Edge Case)
-            # Tests: alphabetical tie-breaking in comes_before()
-          with open('test_ties.csv', 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  writer.writerow(
-                  	['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
-                  writer.writerows([
-                      ['Layla_Tie', 5, 2, 30, 40],    # Should be LAST alphabetically
-                    # Should be FIRST alphabetically
-                    ['Amy_Tie', 5, 2, 30, 40],
-                    # Should be MIDDLE alphabetically
-                    ['Jean_Tie', 5, 2, 30, 40]
-                      ])
+	# Test Person stores all required attributes
+	def test_person_attributes(self):
+		person = student.Person("Test", 5, 2, 30, 40)
 
-            # TEST 5: EXTREME VALUES (Edge Case)
-            # Tests: Formula handles min/max values without errors
-          with open('test_extremes.csv', 'w', newline='') as f:
-                  writer = csv.writer(f)
-                  writer.writerow(
-                  	['name', 'decile_score', 'priors_count', 'total_days_jail', 'total_days_custody'])
-                  writer.writerows([
-                      ['Min', 1, 0, 0, 0],		# Minimum everything
-                      ['Max', 100, 100, 500, 500]  # Input maximum values
-                      ])
+		# Check all required attributes exist
+		required =['name', 'decile_score', 'priors_count', 'total_days_in_jail', 'total_days_in_custody', 'new_decile']
+		missing = []
+		for attr in required:
+			if not hasattr(person, attr):
+				missing.append(attr)
+				
+		if missing:
+			if 'new_decile' in missing:
+				self.fail(f"Missing attributes: {missing}\n"
+									 "You need to calculate 'new_decile' in Person.__init__\n"
+									 "Use the formula")
+			else:
+				self.fail(f"Missing attributes: {missing}\n"
+									 "Store each parameter as an attribute in __init__, for example:\n"
+									 "self.name = name\n"
+									 "self.decile_score = decile_score")
 
-    ### Person Class Tests ###
-      def test_person_creation(self):
-        person = student.Person("Test", 5, 2, 30, 40)
-        self.assertIsNotNone(person)
+### comes_before() Function Tests ###
+	# Test basic comparison with different values
+	def test_comes_before_basic(self):
+		p1 = student.Person("Apple", 2, 0, 0, 0)    # Lower score
+		p2 = student.Person("Jack", 8, 0, 0, 0)			# Higher score
 
-      # Test Person stores all required attributes
-      def test_person_attributes(self):
-        person = student.Person("Test", 5, 2, 30, 40)
+		result = student.comes_before(p1, p2, 'decile_score')
 
-        # Check all required attributes exist
-        required =['name', 'decile_score', 'priors_count',
-                  'total_days_in_jail', 'total_days_in_custody', 'new_decile']
-        for attr in required:
-          self.assertTrue(hasattr(person, attr), f"Missing attribute: {attr}")
+		if result is None:
+			self.fail("comes_before() returned None\n"
+                  "Make sure to return True or False\n"
+                  "Use getattr(a, key) to access the attribute value")
+		if not result:
+			self.fail("comes_before() should return True when p1.decile_score < p2.decile_score\n"
+                  "Apple (score=2) should come before Jack (score=8)")
+		# Reversed test
+		result2 = student.comes_before(p2, p1, 'decile_score')
+		if result2 is not None and result2:
+			self.fail("comes_before() should return False when p1.decile_score > p2.decile_score\n"
+                  "Jack (score=8) should NOT come before Apple (score=2)")
+			
+	def test_comes_before_tiebreaker(self):
+		p1 = student.Person("Aaron", 5, 0, 0, 0)    # Alphabetically first
+		p2 = student.Person("Zarah", 5, 0, 0, 0)    # Alphabetically last
 
-    ### comes_before() Function Tests ###
-      # Test basic comparison with different values
-      def test_comes_before_basic(self):
-        p1 = student.Person("Apple", 2, 0, 0, 0)    # Lower score
-        p2 = student.Person("Jack", 8, 0, 0, 0)			# Higher score
 
-        # p1 should come before p2 when sorting by decile_score
-        self.assertTrue(student.comes_before(p1, p2, 'decile_score'))
-        # p2 should NOT come before p1
-        # Test alphabetical tie-breaking when scores are equal
-        self.assertFalse(student.comes_before(p2, p1, 'decile_score'))
+		result = student.comes_before(p1, p2, 'decile_score')
+		if result is None:
+			self.skipTest("comes_before() not fully implemented")
 
-      def test_comes_before_tiebreaker(self):
-        p1 = student.Person("Aaron", 5, 0, 0, 0)    # Alphabetically first
-        p2 = student.Person("Zarah", 5, 0, 0, 0)     # Alphabetically last
+		if not result:
+				self.fail("When scores are equal (both 5), use alphabetical order\n"
+									"'Aaron' should come before 'Zarah' alphabetically")
+		# Reversed test
+		result2 = student.comes_before(p2, p1, 'decile_score')
+		if result2 is not None and result2:
+				self.fail("When scores are equal and names compared reverse:\n"
+									"Zarah should NOT come before Aaron")
 
-        # Aaron should come before Zarah when scores are equal
-        self.assertTrue(student.comes_before(p1, p2, 'decile_score'))
-        # Zarah should NOT come before Aaron
-        # Test comparison works with different attribute keys
-        self.assertFalse(student.comes_before(p2, p1, 'decile_score'))
+	def test_comes_before_different_keys(self):
+		p1 = student.Person("A", 1, 0, 10, 20)     # Lower new_decile
+		p2 = student.Person("B", 1, 5, 30, 40)     # Higher new_decile
 
-      def test_comes_before_different_keys(self):
-        p1 = student.Person("A", 1, 0, 10, 20)      # Lower new_decile
-        p2 = student.Person("B", 1, 5, 30, 40)     # Higher new_decile
+		# worsks with 'new_decile' as key
+		result = student.comes_before(p1, p2, 'new_decile')
+		if result is None:
+			self.fail("comes_before() with 'new_decile' key returned None\n"
+                "Make sure to use getattr(object, key) to access the attribute\n"
+                "This allows comes_before to work with any attribute like 'decile_score' or 'new_decile'")
 
-        # worsks with 'new_decile' as key
-        result = student.comes_before(p1, p2, 'new_decile')
-        self.assertTrue(result is not None)
+### merge() Function Tests ###
+	# Test merging two sorted lists
+	def test_merge_basic(self):
+		left =[
+			student.Person("A", 1, 0, 0, 0),
+			student.Person("C", 3, 0, 0, 0)
+		]
+		right =[
+			student.Person("B", 2, 0, 0, 0),
+			student.Person("D", 4, 0, 0, 0)
+		]
 
-    ### merge() Function Tests ###
-      # Test merging two sorted lists
-      def test_merge_basic(self):
-        left =[
-            student.Person("A", 1, 0, 0, 0),
-          student.Person("C", 3, 0, 0, 0)
-        ]
-        right =[
-            student.Person("B", 2, 0, 0, 0),
-          student.Person("D", 4, 0, 0, 0)
-        ]
+		merged = student.merge(left, right, 'decile_score')
 
-        merged = student.merge(left, right, 'decile_score')
+		if merged is None:
+			self.fail("merge() returned None. Make sure to return the merged list.")
+			self.assertEqual(len(merged), 4, "merge() should combine all elements from both lists")
+	
+		# Check merged list is sorted
+		scores = [p.decile_score for p in merged]
+		if scores != [1, 2, 3, 4]:
+			self.fail(f"merge() order incorrect. Got scores: {scores}\n"
+               	 "Expected: [1, 2, 3, 4] (ascending sorted order)\n"
+                 "Check that you compare elements using comes_before()")
+		self.assertEqual(scores, [1, 2, 3, 4])
 
-        # Check merged list has correct length
-        self.assertEqual(len(merged), 4)
-        # Check merged list is sorted
-        scores = [p.decile_score for p in merged]
-        self.assertEqual(scores, [1, 2, 3, 4])
+	# Test merging with empty list
+	def test_merge_empty_lists(self):
+		# Empty left, non-empty right
+		left = []
+		right = [student.Person("B", 2, 0, 0, 0)]
+		merged1 = student.merge(left, right, 'decile_score')
 
-      # Test merging with empty list
-      def test_merge_empty_lists(self):
-        # Empty left, non-empty right
-        left = []
-        right = [student.Person("B", 2, 0, 0, 0)]
+		if merged1 is None or len(merged1) != 1:
+			self.fail("When left list is empty, merge() should return the right list")
+		if merged1[0].decile_score != 2:
+			self.fail("Element from right list should be preserved in merge()")
 
-        merged1 = student.merge(left, right, 'decile_score')
-        self.assertEqual(len(merged1), 1)
-        self.assertEqual(merged1[0].decile_score, 2)
+		# Non-empty left, empty right
+		left = [student.Person("A", 1, 0, 0, 0)]
+		right = []
+		merged2 = student.merge(left, right, 'decile_score')
 
-        # Non-empty left, empty right
-        left = [student.Person("A", 1, 0, 0, 0)]
-        right = []
+		if merged2 is None or len(merged2) != 1:
+			self.fail("When right list is empty, merge() should return the left list")
+		if merged2[0].decile_score != 1:
+			self.fail("Element from left list should be preserved in merge()")
+	
+		# Both empty
+		merged3 = student.merge([], [], 'decile_score')
+		if merged3 is None or len(merged3) != 0:
+			self.fail("When both lists are empty, merge() should return empty list")
 
-        merged2 = student.merge(left, right, 'decile_score')
-        self.assertEqual(len(merged2), 1)
-        self.assertEqual(merged2[0].decile_score, 1)
+### merge_sort() Function Tests ###
+	# Test basic merge sort functionality
+	def test_merge_sort_basic(self):
+		people = [
+			student.Person("C", 3, 0, 0, 0),
+			student.Person("A", 1, 0, 0, 0),
+			student.Person("B", 2, 0, 0, 0),
+			student.Person("E", 5, 0, 0, 0),
+			student.Person("D", 4, 0, 0, 0)
+		]
 
-        # Both empty
-        merged3 = student.merge([], [], 'decile_score')
-        self.assertEqual(len(merged3), 0)
+		sorted_people = student.merge_sort(people, 'decile_score')
 
-    ### merge_sort() Function Tests ###
-      # Test basic merge sort functionality
-      def test_merge_sort_basic(self):
-        people = [
-            student.Person("C", 3, 0, 0, 0),
-          student.Person("A", 1, 0, 0, 0),
-          student.Person("B", 2, 0, 0, 0),
-          student.Person("E", 5, 0, 0, 0),
-          student.Person("D", 4, 0, 0, 0)
-        ]
+		if sorted_people is None:
+				self.fail("merge_sort() returned None. Make sure to return the sorted list.")
 
-        sorted_people = student.merge_sort(people, 'decile_score')
+		self.assertEqual(len(sorted_people), 5, "merge_sort() should not lose any elements")
 
-        # Check length unchanged
-        self.assertEqual(len(sorted_people), 5)
-        # Check sorted order
-        scores = [p.decile_score for p in sorted_people]
-        self.assertEqual(scores, [1, 2, 3, 4, 5])
+		scores = [p.decile_score for p in sorted_people]
+		if scores != [1, 2, 3, 4, 5]:
+			self.fail(f"merge_sort() order incorrect. Got scores: {scores}\n"
+                 "Expected: [1, 2, 3, 4, 5] (ascending sorted order)\n"
+                  "Check your merge_sort implementation:\n"
+                  "1. Base case: if len(data) <= 1, return data\n"
+                  "2. Split list in half\n"
+                  "3. Recursively sort each half\n"
+                  "4. Merge the sorted halves")
+			
+	# Test merge sort with empty list
+	def test_merge_sort_empty(self):
+		result = student.merge_sort([], 'decile_score')
+		if result is None or len(result) != 0:
+			self.fail("merge_sort([]) should return empty list")
 
-        # Test merge sort with empty list
-      def test_merge_sort_empty(self):
-        sorted_list = student.merge_sort([], 'decile_score')
-        self.assertEqual(len(sorted_list), 0)
+	# Test merge sort with single element
+	def test_merge_sort_single(self):
+		people = [student.Person("Single", 5, 0, 0, 0)]
+		sorted_people = student.merge_sort(people, 'decile_score')
 
-      # Test merge sort with single element
-      def test_merge_sort_single(self):
-        people = [student.Person("Single", 5, 0, 0, 0)]
-        sorted_people = student.merge_sort(people, 'decile_score')
-        self.assertEqual(len(sorted_people), 1)
-        self.assertEqual(sorted_people[0].name, "Single")
+		if sorted_people is None or len(sorted_people) != 1:
+			self.fail("merge_sort() with single element should return that element unchanged")
+		if sorted_people[0].name != "Single":
+			self.fail("merge_sort() should not change single element")
 
-      # Test merge sort with already sorted list
-      def test_merge_sort_already_sorted(self):
-        people = [
-            student.Person("A", 1, 0, 0, 0),
-          student.Person("B", 2, 0, 0, 0),
-          student.Person("C", 3, 0, 0, 0)
-        ]
+	# Test merge sort with already sorted list
+	def test_merge_sort_already_sorted(self):
+		people = [
+			student.Person("A", 1, 0, 0, 0),
+			student.Person("B", 2, 0, 0, 0),
+			student.Person("C", 3, 0, 0, 0)
+		]
 
-        sorted_people = student.merge_sort(people, 'decile_score')
+		sorted_people = student.merge_sort(people, 'decile_score')
 
-        # Should return same order
-        names = [p.name for p in sorted_people]
-        self.assertEqual(names, ['A', 'B', 'C'])
+		# Should return same order
+		names = [p.name for p in sorted_people]
+		if names != ['A', 'B', 'C']:
+			self.fail(f"Already sorted list changed: {names}\n"
+                 "Expected: ['A', 'B', 'C']\n"
+                 "merge_sort() should preserve order of already sorted list")
 
-      # Test merge sort with reverse sorted list
-      def test_merge_sort_reverse_sorted(self):
-        people = [
-          student.Person("C", 3, 0, 0, 0),
-          student.Person("B", 2, 0, 0, 0),
-          student.Person("A", 1, 0, 0, 0)
-        ]
+	# Test merge sort with reverse sorted list
+	def test_merge_sort_reverse_sorted(self):
+		people = [
+			student.Person("C", 3, 0, 0, 0),
+			student.Person("B", 2, 0, 0, 0),
+			student.Person("A", 1, 0, 0, 0)
+		]
 
-        sorted_people = student.merge_sort(people, 'decile_score')
-        scores = [p.decile_score for p in sorted_people]
-        self.assertEqual(scores, [1, 2, 3])
+		sorted_people = student.merge_sort(people, 'decile_score')
 
-    ### load_data() Function Tests ###
+		scores = [p.decile_score for p in sorted_people]
+		if scores != [1, 2, 3]:
+			self.fail(f"Reverse sorted list not sorted correctly. Got scores: {scores}\n"
+                 "Expected: [1, 2, 3]\n"
+        			   "merge_sort() should sort in ascending order")
 
-      # Test loading data from normal CSV file
-      def test_load_data_normal(self):
-        people = student.load_data('test_normal.csv')
-        self.assertIsNotNone(people)
-        self.assertEqual(len(people), 5)
+### load_data() Function Tests ###
 
-        # Check first person has correct attributes
-        if people:
-          first_person = people[0]
-          self.assertTrue(hasattr(first_person, 'name'))
-          self.assertTrue(hasattr(first_person, 'new_decile'))
+	# Test loading data from normal CSV file
+	def test_load_data_normal(self):
+		people = student.load_data('test_normal.csv')
+		if people is None:
+			self.fail("load_data() returned None. Make sure to return the list of Person objects.")
+		if not isinstance(people, list):
+			self.fail(f"load_data() should return a list, got {type(people)}")
+		if len(people) != 5:
+			self.fail(f"load_data() should load 5 people, got {len(people)}\n"
+			 					 "Check that you're creating a Person object for each row in the CSV")
+			
+		# Check first person has correct attributes
+		if people:
+			first_person = people[0]
+			if not hasattr(first_person, 'name'):
+				self.fail("First Person missing 'name' attribute")
+			if not hasattr(first_person, 'new_decile'):
+				self.fail("First Person missing 'new_decile' attribute")
 
-      # Test loading data from empty CSV file
-      def test_load_data_empty(self):
-        people = student.load_data('test_empty.csv')
+	# Test loading data from empty CSV file
+	def test_load_data_empty(self):
+		people = student.load_data('test_empty.csv')
 
-        # Should return empty list
-        self.assertIsNotNone(people)
-        self.assertEqual(len(people), 0)
+		if people is None:
+			self.fail("load_data() for empty file returned None. Should return empty list [].")
+		if len(people) != 0:
+			self.fail(f"Empty CSV should return empty list, got {len(people)} items")
 
-      # Test loading data from CSV with single record
-      def test_load_data_single(self):
-        people = student.load_data('test_single.csv')
+	# Test loading data from CSV with single record
+	def test_load_data_single(self):
+		people = student.load_data('test_single.csv')
 
-        self.assertEqual(len(people), 1)
-        if people:
-          self.assertEqual(people[0].name, "Case_Single")
+		if people is None:
+			self.fail("load_data() returned None for single record file")
+		if len(people) != 1:
+			self.fail(f"Single record CSV should return 1 Person, got {len(people)}")
+		if people and people[0].name != "Case_Single":
+			self.fail(f"Loaded person name incorrect. Got: {people[0].name}, Expected: Case_Single")
+	
+	# Test that CSV columns are correctly mapped to Person attributes"
+	def test_load_data_column_mapping(self):
+		people = student.load_data('test_normal.csv')
 
-      # Test that CSV columns are correctly mapped to Person attributes"
+		if not people:
+			self.skipTest("load_data() not working yet")
 
-      def test_load_data_column_mapping(self):
-        people = student.load_data('test_normal.csv')
+		person = people[0]
 
-        # Person should have total_days_in_jail, not total_days_jail
-        if people:
-          person = people[0]
-          self.assertTrue(hasattr(person, 'total_days_in_jail'))
-          self.assertTrue(hasattr(person, 'total_days_in_custody'))
+		if not hasattr(person, 'total_days_in_jail'):
+			if hasattr(person, 'total_days_jail'):
+				self.fail("Column mapping error detected for jail days.\n"
+                  "CSV has column: 'total_days_jail'\n"
+                	"Person expects: 'total_days_in_jail'\n"
+                  "Fix in load_data()")
+			else:
+				self.fail("Person missing jail/custody attributes\n"
+              		"Make sure Person gets all 5 parameters from the CSV row")
+				
+		if not hasattr(person, 'total_days_in_custody'):
+			if hasattr(person, 'total_days_custody'):
+				self.fail("Column mapping error for custody days\n"
+                  "CSV has column: 'total_days_custody'\n"
+                  "Person expects: 'total_days_in_custody'\n"
+                  "Fix in load_data()")
 
-    ### Integration Tests ###
+### Integration Tests ###
 
-      # Test complete homework workflow
-      def test_complete_workflow(self):
-        # Load data
-        people = student.load_data('test_normal.csv')
-        self.assertIsNotNone(people)
-        self.assertTrue(len(people) > 0)
+	# Test complete homework workflow
+	def test_complete_workflow(self):
+		# Load data
+		people = student.load_data('test_normal.csv')
 
-        # Sort by original decile_score
-        sorted_by_original = student.merge_sort(people, 'decile_score')
+		if not people or len(people) == 0:
+			self.skipTest("load_data() not working yet")
 
-        # Sort by new_decile
-        sorted_by_new = student.merge_sort(people, 'new_decile')
+		# Sort by original decile_score
+		sorted_by_original = student.merge_sort(people, 'decile_score')
+		if not sorted_by_original:
+				self.fail("merge_sort() failed. Check your implementation.")
+	
+		# Sort by new_decile
+		sorted_by_new = student.merge_sort(people, 'new_decile')
+		if not sorted_by_new:
+			self.fail("merge_sort() with 'new_decile' key failed.\n" 
+			 					"Make sure comes_before() works with different attribute keys")
 
-        # Both should have same number of elements
-        self.assertEqual(len(sorted_by_original), len(sorted_by_new))
-        self.assertEqual(len(sorted_by_original), len(people))
+		# Verify both have same number of elements
+		if len(sorted_by_original) != len(sorted_by_new):
+			self.fail(f"Different number of elements after sorting: {len(sorted_by_original)} vs {len(sorted_by_new)}")
 
-        # Both should be sorted
-        original_scores = [p.decile_score for p in sorted_by_original]
-        new_scores = [p.new_decile for p in sorted_by_new]
+		if len(sorted_by_original) != len(people):
+				self.fail("merge_sort() should not lose elements")
+		
+		# Verify both are sorted
+		original_scores = [p.decile_score for p in sorted_by_original]
+		if original_scores != sorted(original_scores):
+			self.fail("List not sorted by decile_score\n"
+                "Check merge_sort() and comes_before() functions")
 
-        self.assertEqual(original_scores, sorted(original_scores))
-        self.assertEqual(new_scores, sorted(new_scores))
+		new_scores = [p.new_decile for p in sorted_by_new]
+		if new_scores != sorted(new_scores):
+			self.fail("List not sorted by new_decile\n"
+                "Check that new_decile is calculated correctly and comes_before() works with it")
+		
+	# Test sorting with all equal scores (alphabetical order)
+	def test_edge_case_ties(self):
+		people = student.load_data('test_ties.csv')
 
-      # Test sorting with all equal scores (alphabetical order)
-      def test_edge_case_ties(self):
-        people = student.load_data('test_ties.csv')
-        if people:
-            sorted_people = student.merge_sort(people, 'decile_score')
-            # Should be sorted alphabetically
-            names = [p.name for p in sorted_people]
-            self.assertEqual(names, ['Amy_Tie', 'Jean_Tie', 'Layla_Tie'])
+		if not people:
+			self.skipTest("load_data() not working yet")
+		
+		sorted_people = student.merge_sort(people, 'decile_score')
 
-      # Test sorting with extreme values
-      def test_edge_case_extremes(self):
-        people = student.load_data('test_extremes.csv')
-        if people:
-          sorted_people = student.merge_sort(people, 'decile_score')
-          # Min should come before Max
-          names = [p.name for p in sorted_people]
-          self.assertEqual(names, ['Min', 'Max'])
+		if not sorted_people:
+				self.fail("merge_sort() returned None or empty list")
 
+		# Should be sorted alphabetically
+		expected_names = ['Amelia_Tie', 'Amy_Tie', 'Andy_Tie']
+		actual_names = [p.name for p in sorted_people]
+
+		if actual_names != expected_names:
+			self.fail(f"Alphabetical tie-breaking is incorrect :(\n"
+                f"Expected order: {expected_names}\n"
+                f"Got: {actual_names}\n"
+                f"When scores are equal, names should be sorted alphabetically.\n"
+                f"Note: 'Amelia' comes before 'Amy' which comes before 'Andy'")
+			
+	# Test sorting with extreme values
+	def test_edge_case_extremes(self):
+		people = student.load_data('test_extremes.csv')
+
+		if not people:
+			self.skipTest("load_data() not working yet")
+
+		sorted_people = student.merge_sort(people, 'decile_score')
+		
+		if not sorted_people:
+			self.fail("merge_sort() returned None or empty list")
+
+		names = [p.name for p in sorted_people]
+		if names != ['Min', 'Max']:
+			self.fail(f"Extreme values sorting incorrect. Got: {names}, Expected: ['Min', 'Max']\n"
+								 "Min score should come before Max score")
 
 # Runs
 if __name__ == '__main__':
-  unittest.main(verbosity=2)
+	print("\n" + "="*100)
+	print("Student Tests - Providing Guidance When Faced With Errors")
+	print("Run: python3 -m unittest tests_student_helper.py\n")
+	unittest.main(verbosity=2)
