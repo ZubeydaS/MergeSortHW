@@ -7,19 +7,19 @@
 * STARTER CODE
 * INDUCTIVE PROOF OF CORRECTNESS
 * PROVIING EFFICIENCY
-*  IMPLEMENT & TEST
+* IMPLEMENT & TEST
 * CIVIC ENGAGEMENT UNDERSTANDING
 * EXIT TICKET
 
 ### OBJECTIVE
-This lab is designed to deepen your understanding of binary search by applying it to real-world scenerio and reasoning formally about its correctness and efficieny.
+This lab is designed to deepen your understanding of binary search by applying it to a real-world scenerio and reasoning formally about its correctness and efficieny.
 
 You are expected to already be familiar with the basic mechanics of binary search. This lab emphasizes intuition-building, justification, and careful reeasoning rather than learning the algorithm for the first time as the only goal. 
 
 You will:
 * Complete a partially written binary search function
 * Reason about correctness using induction
-* Analyze efficience using a recurrence relation
+* Analyze efficiency using a recurrence relation
 * Reflect on why these ideas matter in civic contexts
 ```
 Does this task/explanation/question make sense?
@@ -44,7 +44,7 @@ other comments: __________
 ```
 
 ### REVIEW & UNDERSTANDING BINARY SEARCH
-You have previously learned binarcy search. Before beginning the lab activities, review the following ideas:
+You have previously overviewed binarcy search. Before beginning the lab activities, review the following ideas:
 * Binary search operates on sorted data
 * The search interval is reduced at every step
 * Comparisons determine which half of the list can be safely discarded
@@ -99,17 +99,17 @@ other comments: __________
 ### INDUCTIVE PROOF OF CORRECTNESS
 You will now justify the correctness of binary search using **induction**.
 
-##### Task A: Base Cases
+#### Task A: Base Cases
 Identify the smallest possible input sizes and describe: 
 * What binary search does
 * Why the result is correct
 
 Do not just assume correctness, explain it.
 
-##### Task B: Inductive Hypothesis
+#### Task B: Inductive Hypothesis
 State a clear inductive hypothesis for binary search on inputs of size *k*
 
-##### Task C: Inductive Step
+#### Task C: Inductive Step
 For an input of size *n > 1*:
 * Describe what the algorithm does first
 * Explain how the problem is reduced
@@ -123,9 +123,9 @@ other comments: __________
 ### PROVIING EFFICIENCY
 Binary search reduces the problem size at each step.
 
-##### Task
+#### Task
 You are given the recurrence relation:
-#### *T(n) = T(n/2) + c*
+##### *T(n) = T(n/2) + c*
 By hand:
 1. Draw a recursion tree
 2. Determine how many level the tree has
@@ -158,21 +158,21 @@ Does this task/explanation/question make sense?
 other comments: __________
 ```
 ### CIVIC ENGAGEMENT UNDERSTANDING
-Binary searcg is often used in systems where speed and correctness are critical.
+Binary search is often used in systems where speed and correctness are critical.
 
 #### Activity
 In groups, discuss:
 * Why inefficient searching could be harmful in emergency systems
 * How algorithmic gurantees affect public trust
 
-Summarize you discussion in 2-3 bullet points. 
+Summarize your discussion in 2-3 bullet points. 
 
 ```
 Does this task/explanation/question make sense?
 [__] yes | [__] no | [__] partially
 other comments: __________
 ```
-#### EXIT TICKET
+### EXIT TICKET
 Answer the following briefly:
 1. Why does binary search never miss a target that exists?
 2. How does the recurrence relation justify logarithmic time?
